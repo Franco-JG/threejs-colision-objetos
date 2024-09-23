@@ -1,9 +1,11 @@
 import * as THREE from 'three'
+
 import './core/orbit-controls.ts'
 import './style.css'
 import { camera } from './core/camera.ts';
 import { renderer, updateRenderer } from './core/renderer.ts'
 import { ambientLight, directionalLight } from './core/lights.ts';
+import { isCollition } from './utils.ts';
 
 //Scene
 const scene = new THREE.Scene()
@@ -23,7 +25,7 @@ plane.receiveShadow = true
 scene.add(plane);
 
 const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(1.5, 32, 32),
+  new THREE.SphereGeometry(1, 32, 32),
   new THREE.MeshToonMaterial({
     color: 0x4b45ff,
     // wireframe: true
@@ -41,7 +43,6 @@ const cube = new THREE.Mesh(
   })
 )
 cube.position.set(6,2,0)
-cube.rotateY(Math.PI/180 * 90)
 cube.castShadow = true
 scene.add(cube)
 
@@ -58,7 +59,7 @@ updateRenderer();
 
 // Función para generar trayectorias elípticas
 let time = 0;
-let velocidadAnimacion = 0.03
+let velocidadAnimacion = 0.04
 const a1 = 7, b1 = 5;  // Radios de la elipse para la esfera
 const a2 = -3, b2 = 7;  // Radios de la elipse para el cubo
 
@@ -73,11 +74,16 @@ const animate = () => {
   sphere.position.z = b1 * Math.sin(time);
 
   // Trayectoria elíptica para el cubo (en el plano XZ con diferentes radios)
-  cube.position.x = a2 * Math.cos(time);
+  cube.position.x = 5 + a2 * Math.cos(time);
   cube.position.z = b2 * Math.sin(time);
 
   // Actualiza la línea
   line.geometry.setFromPoints([cube.position, sphere.position]);
+
+  if(isCollition(cube,sphere)){
+    console.log('Colision detectada');
+    
+  }
 }
 
 animate()
