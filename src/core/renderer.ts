@@ -3,7 +3,7 @@ import { sizes } from "./camera.ts";
 
 
 //Renderer
-const canvas: HTMLElement = document.querySelector('#scene') as HTMLElement
+const canvas: HTMLElement = <HTMLElement>document.querySelector('#scene')
 
 export const renderer =  new WebGLRenderer({
     canvas,

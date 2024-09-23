@@ -23,10 +23,10 @@ plane.receiveShadow = true
 scene.add(plane);
 
 const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(1, 32, 32),
+  new THREE.SphereGeometry(1.5, 32, 32),
   new THREE.MeshToonMaterial({
     color: 0x4b45ff,
-    wireframe: true
+    // wireframe: true
   }),
 );
 sphere.position.set(-3,2,0)
@@ -34,26 +34,33 @@ sphere.castShadow = true
 scene.add(sphere)
 
 const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1,1,1,4,4,4),
+  new THREE.BoxGeometry(2,2,2,4,4,4),
   new THREE.MeshToonMaterial({
     color: 0xfc3a41,
-    wireframe: true
+    // wireframe: true
   })
 )
-cube.position.set(2,2,0)
+cube.position.set(6,2,0)
 cube.rotateY(Math.PI/180 * 90)
 cube.castShadow = true
 scene.add(cube)
 
+const line = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([cube.position, sphere.position]),
+  new THREE.LineBasicMaterial({
+    color: 0x00ff00,
+  })
+)
+scene.add(line)
+
 scene.add(camera);
-scene.add(new THREE.AxesHelper())
 updateRenderer();
 
 // Función para generar trayectorias elípticas
 let time = 0;
 let velocidadAnimacion = 0.03
-const a1 = 5, b1 = 1;  // Radios de la elipse para la esfera
-const a2 = 1, b2 = 4;  // Radios de la elipse para el cubo
+const a1 = 7, b1 = 5;  // Radios de la elipse para la esfera
+const a2 = -3, b2 = 7;  // Radios de la elipse para el cubo
 
 const animate = () => {
   renderer.render(scene, camera)
@@ -68,6 +75,9 @@ const animate = () => {
   // Trayectoria elíptica para el cubo (en el plano XZ con diferentes radios)
   cube.position.x = a2 * Math.cos(time);
   cube.position.z = b2 * Math.sin(time);
+
+  // Actualiza la línea
+  line.geometry.setFromPoints([cube.position, sphere.position]);
 }
 
 animate()
