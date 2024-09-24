@@ -1,20 +1,19 @@
-import * as THREE from 'three'
-
-import './core/orbit-controls.ts'
 import './style.css'
+import * as THREE from 'three'
+import './core/orbit-controls.ts'
 import { camera } from './core/camera.ts';
 import { renderer, updateRenderer } from './core/renderer.ts'
 import { ambientLight, directionalLight } from './core/lights.ts';
-import { isCollition } from './utils.ts';
+import { collitionComponent } from "./components/collitionMessage.ts";
 
 //Scene
 const scene = new THREE.Scene()
 scene.add(ambientLight)
 scene.add(directionalLight)
-scene.add(new THREE.DirectionalLightHelper(directionalLight, 1))
+// scene.add(new THREE.DirectionalLightHelper(directionalLight, 1))
 
 const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(20,20,10,10),
+  new THREE.PlaneGeometry(30,30),
   new THREE.MeshToonMaterial({
     color: 0x8a8a8a,
     side: THREE.DoubleSide
@@ -24,7 +23,7 @@ plane.rotateX(Math.PI/180 * 90)
 plane.receiveShadow = true
 scene.add(plane);
 
-const sphere = new THREE.Mesh(
+export const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(1, 32, 32),
   new THREE.MeshToonMaterial({
     color: 0x4b45ff,
@@ -35,7 +34,7 @@ sphere.position.set(-3,2,0)
 sphere.castShadow = true
 scene.add(sphere)
 
-const cube = new THREE.Mesh(
+export const cube = new THREE.Mesh(
   new THREE.BoxGeometry(2,2,2,4,4,4),
   new THREE.MeshToonMaterial({
     color: 0xfc3a41,
@@ -52,6 +51,7 @@ const line = new THREE.Line(
     color: 0x00ff00,
   })
 )
+line.castShadow = true
 scene.add(line)
 
 scene.add(camera);
@@ -61,7 +61,7 @@ updateRenderer();
 let time = 0;
 let velocidadAnimacion = 0.04
 const a1 = 7, b1 = 5;  // Radios de la elipse para la esfera
-const a2 = -3, b2 = 7;  // Radios de la elipse para el cubo
+const a2 = -4, b2 = 5;  // Radios de la elipse para el cubo
 
 const animate = () => {
   renderer.render(scene, camera)
@@ -74,16 +74,14 @@ const animate = () => {
   sphere.position.z = b1 * Math.sin(time);
 
   // Trayectoria elíptica para el cubo (en el plano XZ con diferentes radios)
-  cube.position.x = 5 + a2 * Math.cos(time);
+  cube.position.x = 7 + a2 * Math.cos(time);
   cube.position.z = b2 * Math.sin(time);
 
   // Actualiza la línea
   line.geometry.setFromPoints([cube.position, sphere.position]);
 
-  if(isCollition(cube,sphere)){
-    console.log('Colision detectada');
-    
-  }
+  collitionComponent();
+
 }
 
 animate()
